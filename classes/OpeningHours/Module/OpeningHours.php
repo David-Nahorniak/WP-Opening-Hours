@@ -6,6 +6,7 @@ use OpeningHours\Entity\PostSetProvider;
 use OpeningHours\Entity\Set;
 use OpeningHours\Entity\SetProvider;
 use OpeningHours\Util\ArrayObject;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * OpeningHours Module

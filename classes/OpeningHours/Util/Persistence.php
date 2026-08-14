@@ -8,6 +8,7 @@ use OpeningHours\Entity\Holiday;
 use OpeningHours\Entity\IrregularOpening;
 use OpeningHours\Entity\Period;
 use WP_Post;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Saves data to and loads data from a specific post

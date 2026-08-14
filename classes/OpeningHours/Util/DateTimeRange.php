@@ -3,6 +3,7 @@
 namespace OpeningHours\Util;
 
 use OpeningHours\Entity\DateTimeRange as DateTimeRangeInterface;
+defined( 'ABSPATH' ) || exit;
 
 class DateTimeRange {
   /**

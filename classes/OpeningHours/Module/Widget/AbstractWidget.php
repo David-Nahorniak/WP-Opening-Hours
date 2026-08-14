@@ -6,6 +6,7 @@ use OpeningHours\Fields\FieldRenderer;
 use OpeningHours\Fields\WidgetFieldRenderer;
 use OpeningHours\Module\Shortcode\AbstractShortcode as Shortcode;
 use WP_Widget;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Abstraction for a Widget
@@ -86,6 +87,98 @@ abstract class AbstractWidget extends WP_Widget {
   public function renderField(array $field, array $instance) {
     $value = array_key_exists($field['name'], $instance) ? $instance[$field['name']] : null;
     return $this->fieldRenderer->getFieldMarkup($field, $value);
+  }
+
+  /**
+   * Sanitizes widget form input on save.
+   *
+   * Iterates over the registered fields and sanitizes each value according to its
+   * field type, which also secures the widget→shortcode data path.
+   *
+   * @param     array $new_instance The new widget instance values
+   * @param     array $old_instance The previous widget instance values
+   * @return    array                       The sanitized widget instance
+   */
+  public function update($new_instance, $old_instance) {
+    $instance = array();
+
+    foreach ($this->fields as $name => $field) {
+      $value = array_key_exists($name, $new_instance) ? $new_instance[$name] : null;
+      $instance[$name] = $this->sanitizeFieldValue($field, $value, $old_instance);
+    }
+
+    return $instance;
+  }
+
+  /**
+   * Sanitizes a single widget field value according to its field type.
+   *
+   * @param     array $field       The field configuration array
+   * @param     mixed $value       The raw value submitted in the widget form
+   * @param     array $old_instance The previous widget instance (used as fallback for selects)
+   *
+   * @return    mixed                The sanitized value
+   */
+  protected function sanitizeFieldValue(array $field, $value, array $old_instance) {
+    $type = array_key_exists('type', $field) ? $field['type'] : 'text';
+
+    switch ($type) {
+      case 'checkbox':
+        return !empty($value);
+
+      case 'number':
+        return is_numeric($value) ? $value + 0 : '';
+
+      case 'select':
+      case 'select-multi':
+        $options = $this->resolveFieldOptions($field);
+
+        if ($type === 'select-multi') {
+          if (!is_array($value)) {
+            return array();
+          }
+
+          $sanitized = array();
+          foreach ($value as $key) {
+            if (is_string($key) && array_key_exists($key, $options)) {
+              $sanitized[] = $key;
+            }
+          }
+
+          return $sanitized;
+        }
+
+        if (is_string($value) && array_key_exists($value, $options)) {
+          return $value;
+        }
+
+        return '';
+
+      case 'textarea':
+        return is_string($value) ? sanitize_textarea_field($value) : '';
+
+      case 'text':
+      case 'time':
+      case 'date':
+      case 'email':
+      case 'url':
+      default:
+        return is_string($value) ? sanitize_text_field($value) : '';
+    }
+  }
+
+  /**
+   * Resolves the available options for a field, invoking the options callback if present.
+   *
+   * @param     array $field The field configuration array
+   * @return    array               Associative array of allowed option keys
+   */
+  protected function resolveFieldOptions(array $field) {
+    if (array_key_exists('options_callback', $field) && is_callable($field['options_callback'])) {
+      return (array) call_user_func($field['options_callback']);
+    }
+
+    return array_key_exists('options', $field) && is_array($field['options']) ? $field['options'] : array();
   }
 
   /**

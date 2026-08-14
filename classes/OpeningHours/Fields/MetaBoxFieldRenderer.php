@@ -1,6 +1,7 @@
 <?php
 
 namespace OpeningHours\Fields;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * FieldRenderer for Fields in a meta box

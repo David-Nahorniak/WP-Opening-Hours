@@ -8,6 +8,7 @@ use OpeningHours\Entity\IrregularOpening;
 use OpeningHours\Entity\Period;
 use OpeningHours\Entity\Set;
 use OpeningHours\Util\Dates;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Generator for schema.org `OpeningHoursSpec` objects from Opening Hours `Set`s

@@ -7,6 +7,7 @@ use OpeningHours\Entity\IrregularOpening;
 use OpeningHours\Entity\Period;
 use OpeningHours\Util\Dates;
 use OpeningHours\Util\Weekdays;
+defined( 'ABSPATH' ) || exit;
 
 class OverviewModel {
   /**

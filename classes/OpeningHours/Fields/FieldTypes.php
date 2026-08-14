@@ -1,6 +1,7 @@
 <?php
 
 namespace OpeningHours\Fields;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Class containing field types as constants

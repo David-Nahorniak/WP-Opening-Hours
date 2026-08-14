@@ -7,6 +7,7 @@ use OpeningHours\Module\CustomPostType\Set as SetPostType;
 use OpeningHours\Util\ArrayObject;
 use OpeningHours\Util\Dates;
 use OpeningHours\Util\Persistence;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * SetProvider for Sets created from the Set Post Type

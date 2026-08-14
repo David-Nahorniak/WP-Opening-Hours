@@ -3,6 +3,7 @@
 namespace OpeningHours\Module\CustomPostType;
 
 use OpeningHours\Module\AbstractModule;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Set Custom Post Type
@@ -94,12 +95,12 @@ class Set extends AbstractModule {
     $arguments = array(
       'labels' => $this->getLabels(),
       'public' => false,
-      'publicly_queryable' => true,
+      'publicly_queryable' => false,
       'show_ui' => true,
       'show_in_menu' => true,
       'query_var' => true,
       'capability_type' => 'page',
-      'has_archive' => true,
+      'has_archive' => false,
       'hierarchical' => true,
       'menu_position' => 400,
       'menu_icon' => 'dashicons-clock',

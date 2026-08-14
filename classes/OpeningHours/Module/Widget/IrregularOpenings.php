@@ -4,6 +4,7 @@ namespace OpeningHours\Module\Widget;
 
 use OpeningHours\Module\OpeningHours;
 use OpeningHours\Module\Shortcode\IrregularOpenings as IrregularOpeningsShortcode;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Widget for IrregularOpenings Shortcode

@@ -1,6 +1,7 @@
 <?php
 
 namespace OpeningHours\Entity;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Abstraction for a factory for Sets.

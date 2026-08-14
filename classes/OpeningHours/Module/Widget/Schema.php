@@ -4,6 +4,7 @@ namespace OpeningHours\Module\Widget;
 
 use OpeningHours\Module\OpeningHours;
 use OpeningHours\Module\Shortcode\Schema as SchemaShortcode;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Widget for Schema.org Shortcode

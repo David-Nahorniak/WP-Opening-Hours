@@ -7,6 +7,7 @@ use OpeningHours\Module\AbstractModule;
 use OpeningHours\Module\Widget\AbstractWidget;
 use OpeningHours\Util\Dates;
 use OpeningHours\Util\Weekdays;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Core Module for the Opening Hours Plugin
@@ -30,7 +31,7 @@ class OpeningHours extends AbstractModule {
   protected $widgets;
 
   /** The plugin version */
-  const VERSION = '2.3.0';
+  const VERSION = '2.3.1';
 
   /** The Plugin DB version */
   const DB_VERSION = '2';
@@ -73,6 +74,10 @@ class OpeningHours extends AbstractModule {
   }
 
   public function maybeUpdate() {
+    if (!is_admin()) {
+      return;
+    }
+
     $dbVersion = get_option('opening_hours_db_version', false);
 
     if ($dbVersion === false) {

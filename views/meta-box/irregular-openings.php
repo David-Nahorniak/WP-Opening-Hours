@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 /**
  * Opening Hours: View: Meta Box: IrregularOpenings
  */
@@ -11,8 +12,6 @@ $irregular_openings = $this->data['irregular_openings'];
 ?>
 
 <div id="op-irregular-openings-wrap">
-
-	<?php MetaBox::getInstance()->nonceField(); ?>
 
 	<table class="op-irregular-openings" id="op-io-table">
 		<thead>

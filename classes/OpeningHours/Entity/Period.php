@@ -7,6 +7,7 @@ use DateTime;
 use InvalidArgumentException;
 use OpeningHours\Util\Dates;
 use OpeningHours\Util\Weekday;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Represents a regular opening period

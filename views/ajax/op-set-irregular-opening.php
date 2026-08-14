@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 
 use OpeningHours\Module\CustomPostType\MetaBox\IrregularOpenings as MetaBox;
 use OpeningHours\Util\Dates;
@@ -16,22 +17,22 @@ $timeEnd = ( $io->isDummy() ) ? null : $io->getEnd()->format( Dates::STD_TIME_FO
 <tr class="op-irregular-opening">
   <td class="col-name">
     <input type="text" class="widefat name"
-           name="<?php echo MetaBox::POST_KEY; ?>[name][]" value="<?php echo $name; ?>">
+           name="<?php echo MetaBox::POST_KEY; ?>[name][]" value="<?php echo esc_attr( $name ); ?>">
   </td>
 
   <td class="col-date">
     <input type="text" class="widefat date input-gray"
-           name="<?php echo MetaBox::POST_KEY; ?>[date][]" value="<?php echo $date; ?>">
+           name="<?php echo MetaBox::POST_KEY; ?>[date][]" value="<?php echo esc_attr( $date ); ?>">
   </td>
 
   <td class="col-time-start">
     <input type="text" class="widefat time-start input-timepicker input-gray"
-           name="<?php echo MetaBox::POST_KEY; ?>[timeStart][]" value="<?php echo $timeStart; ?>">
+           name="<?php echo MetaBox::POST_KEY; ?>[timeStart][]" value="<?php echo esc_attr( $timeStart ); ?>">
   </td>
 
   <td class="col-time-end">
     <input type="text" class="widefat time-end input-timepicker input-gray"
-           name="<?php echo MetaBox::POST_KEY; ?>[timeEnd][]" value="<?php echo $timeEnd; ?>">
+           name="<?php echo MetaBox::POST_KEY; ?>[timeEnd][]" value="<?php echo esc_attr( $timeEnd ); ?>">
   </td>
 
   <td class="col-remove">

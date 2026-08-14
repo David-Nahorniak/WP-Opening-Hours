@@ -1,6 +1,19 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 
-extract( $this->data['attributes'] );
+$attributes = $this->data['attributes'];
+
+$before_widget        = isset( $attributes['before_widget'] ) ? $attributes['before_widget'] : '';
+$after_widget         = isset( $attributes['after_widget'] ) ? $attributes['after_widget'] : '';
+$before_title         = isset( $attributes['before_title'] ) ? $attributes['before_title'] : '';
+$after_title          = isset( $attributes['after_title'] ) ? $attributes['after_title'] : '';
+$title                = isset( $attributes['title'] ) ? $attributes['title'] : null;
+$text                 = isset( $attributes['text'] ) ? $attributes['text'] : '';
+$is_open              = isset( $attributes['is_open'] ) ? $attributes['is_open'] : false;
+$classes              = isset( $attributes['classes'] ) ? $attributes['classes'] : '';
+$next_string          = isset( $attributes['next_string'] ) ? $attributes['next_string'] : null;
+$next_period_classes  = isset( $attributes['next_period_classes'] ) ? $attributes['next_period_classes'] : '';
+$today_string         = isset( $attributes['today_string'] ) ? $attributes['today_string'] : null;
 
 /**
  * Variables defined by extraction
@@ -19,20 +32,20 @@ extract( $this->data['attributes'] );
  * @var     $classes            string w/ classes for span
  */
 
-echo $before_widget;
+echo wp_kses_post( $before_widget );
 
 if ( ! empty( $title ) ) {
-	echo $before_title . $title . $after_title;
+	echo wp_kses_post( $before_title ) . wp_kses_post( $title ) . wp_kses_post( $after_title );
 }
 
-echo '<span class="' . $classes . '">' . $text . '</span>';
+echo '<span class="' . esc_attr( $classes ) . '">' . wp_kses_post( $text ) . '</span>';
 
 if ( !$is_open && isset($next_string) && is_string($next_string) ) {
-	echo '<span class="op-next-period ' . $next_period_classes . '">' . $next_string . '</span>';
+	echo '<span class="op-next-period ' . esc_attr( $next_period_classes ) . '">' . wp_kses_post( $next_string ) . '</span>';
 }
 
 if (isset($today_string) && is_string($today_string) && strlen($today_string) > 0) {
-  echo '<span class="op-today">'. $today_string .'</span>';
+  echo '<span class="op-today">'. wp_kses_post( $today_string ) .'</span>';
 }
 
-echo $after_widget;
+echo wp_kses_post( $after_widget );

@@ -9,6 +9,7 @@ use OpeningHours\Util\Dates;
 use OpeningHours\Util\Persistence;
 use OpeningHours\Util\ViewRenderer;
 use WP_Post;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Meta Box implementation for Holidays meta box
@@ -42,6 +43,8 @@ class Holidays extends AbstractMetaBox {
 
   /** @inheritdoc */
   public function renderMetaBox(WP_Post $post) {
+    $this->nonceField($post->ID);
+
     $set = $this->getSet($post->ID);
 
     if (count($set->getHolidays()) < 1) {
@@ -92,16 +95,33 @@ class Holidays extends AbstractMetaBox {
    */
   public function getHolidaysFromPostData(array $data) {
     $holidays = array();
+
+    if (empty($data['name']) || !is_array($data['name'])) {
+      return $holidays;
+    }
+
     for ($i = 0; $i < count($data['name']); $i++) {
-      if (!empty($data['name'][$i]) && (empty($data['dateStart'][$i]) || empty($data['dateEnd'][$i]))) {
+      $name = isset($data['name'][$i]) && is_string($data['name'][$i]) ? sanitize_text_field($data['name'][$i]) : '';
+      $dateStart = isset($data['dateStart'][$i]) && is_string($data['dateStart'][$i]) ? sanitize_text_field($data['dateStart'][$i]) : '';
+      $dateEnd = isset($data['dateEnd'][$i]) && is_string($data['dateEnd'][$i]) ? sanitize_text_field($data['dateEnd'][$i]) : '';
+
+      if (!empty($name) && (empty($dateStart) || empty($dateEnd))) {
+        continue;
+      }
+
+      if (preg_match(Dates::STD_DATE_FORMAT_REGEX, $dateStart) !== 1) {
+        continue;
+      }
+
+      if (preg_match(Dates::STD_DATE_FORMAT_REGEX, $dateEnd) !== 1) {
         continue;
       }
 
       try {
         $holiday = new Holiday(
-          $data['name'][$i],
-          new DateTime($data['dateStart'][$i]),
-          new DateTime($data['dateEnd'][$i])
+          $name,
+          new DateTime($dateStart),
+          new DateTime($dateEnd)
         );
         $holidays[] = $holiday;
       } catch (\InvalidArgumentException $e) {

@@ -19,7 +19,8 @@ jQuery.fn.opHolidays = function() {
 
   function add() {
     var data = {
-      action: "op_render_single_dummy_holiday"
+      action: "op_render_single_dummy_holiday",
+      nonce: ajax_object.nonce
     };
 
     jQuery.post(ajax_object.ajax_url, data, function(response) {

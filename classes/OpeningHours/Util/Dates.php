@@ -6,6 +6,7 @@ use DateInterval;
 use DateTime;
 use DateTimeZone;
 use OpeningHours\Module\AbstractModule;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Helper class for Dates and Time

@@ -2,6 +2,7 @@
 
 namespace OpeningHours\Module\Schema;
 use OpeningHours\Util\Dates;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Represents a sequence of `ValidityPeriods`

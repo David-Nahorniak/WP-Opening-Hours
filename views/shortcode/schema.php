@@ -1,6 +1,9 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 
-extract($this->data['attributes']);
+$attributes = $this->data['attributes'];
+
+$schema = isset( $attributes['schema'] ) ? $attributes['schema'] : array();
 
 /**
  * Variables defined by extraction
@@ -9,5 +12,5 @@ extract($this->data['attributes']);
  */
 ?>
 <script type="application/ld+json">
-  <?php echo json_encode($schema, JSON_PRETTY_PRINT + JSON_UNESCAPED_SLASHES); ?>
+  <?php echo json_encode($schema, JSON_PRETTY_PRINT | JSON_HEX_TAG | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE); ?>
 </script>

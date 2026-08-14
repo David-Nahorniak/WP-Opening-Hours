@@ -4,6 +4,7 @@ namespace OpeningHours\Module\Schema;
 
 use OpeningHours\Entity\Set;
 use OpeningHours\Util\Dates;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Represents a period in time in which the specified `$set` serves

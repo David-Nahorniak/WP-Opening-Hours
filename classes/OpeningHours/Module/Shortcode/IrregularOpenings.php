@@ -6,6 +6,7 @@ use OpeningHours\Util\DateTimeRange;
 use OpeningHours\Entity\Set;
 use OpeningHours\Module\OpeningHours;
 use OpeningHours\Util\Dates;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Shortcode implementation for a list of Irregular Openings

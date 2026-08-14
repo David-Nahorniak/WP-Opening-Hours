@@ -10,6 +10,7 @@ use OpeningHours\Module\CustomPostType\MetaBox\IrregularOpenings;
 use OpeningHours\Module\CustomPostType\MetaBox\OpeningHours as OpeningHoursMetaBox;
 use OpeningHours\Util\Dates;
 use OpeningHours\Util\ViewRenderer;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Ajax module
@@ -23,6 +24,9 @@ class Ajax extends AbstractModule {
 
   /** The name of the ajax variable for scripts */
   const JS_AJAX_OBJECT = 'ajax_object';
+
+  /** The nonce action used to verify ajax requests */
+  const NONCE_ACTION = 'op_ajax_nonce';
 
   /**
    * Collection of all ajax actions
@@ -42,11 +46,23 @@ class Ajax extends AbstractModule {
     self::registerAjaxAction('op_render_single_dummy_irregular_opening', 'renderSingleDummyIrregularOpening');
   }
 
+  /**
+   * Verifies the ajax nonce and the current user's capability for admin ajax endpoints.
+   * Terminates the request with a 403 response when the check fails.
+   */
+  protected static function verifyRequest() {
+    if (!current_user_can('edit_posts') || check_ajax_referer(self::NONCE_ACTION, 'nonce', false) === false) {
+      wp_die(-1, '', array('response' => 403));
+    }
+  }
+
   /** Action: Render Single Period */
   public static function renderSinglePeriod() {
-    $weekday = (int) $_POST['weekday'];
-    $timeStart = $_POST['timeStart'];
-    $timeEnd = $_POST['timeEnd'];
+    self::verifyRequest();
+
+    $weekday = absint($_POST['weekday']);
+    $timeStart = isset($_POST['timeStart']) && is_string($_POST['timeStart']) ? sanitize_text_field($_POST['timeStart']) : '';
+    $timeEnd = isset($_POST['timeEnd']) && is_string($_POST['timeEnd']) ? sanitize_text_field($_POST['timeEnd']) : '';
     $config = array(
       'weekday' => $weekday
     );
@@ -66,6 +82,8 @@ class Ajax extends AbstractModule {
 
   /** Action: Render Single Dummy Holiday */
   public static function renderSingleDummyHoliday() {
+    self::verifyRequest();
+
     $holiday = Holiday::createDummyPeriod();
     Holidays::getInstance()->renderSingleHoliday($holiday);
     die();
@@ -73,6 +91,8 @@ class Ajax extends AbstractModule {
 
   /** Action: Render Single Dummy Irregular Opening */
   public static function renderSingleDummyIrregularOpening() {
+    self::verifyRequest();
+
     $view = new ViewRenderer(op_view_path(IrregularOpenings::TEMPLATE_PATH_SINGLE), array(
       'io' => IrregularOpening::createDummy()
     ));
@@ -104,7 +124,8 @@ class Ajax extends AbstractModule {
    */
   public static function injectAjaxUrl($handle) {
     wp_localize_script($handle, self::JS_AJAX_OBJECT, array(
-      'ajax_url' => admin_url('admin-ajax.php')
+      'ajax_url' => admin_url('admin-ajax.php'),
+      'nonce' => wp_create_nonce(self::NONCE_ACTION)
     ));
   }
 

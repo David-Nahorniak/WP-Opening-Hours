@@ -3,6 +3,7 @@
 namespace OpeningHours\Entity;
 
 use OpeningHours\Module\CustomPostType\MetaBox\SetDetails;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Wrapper class around a child set containing validity criteria

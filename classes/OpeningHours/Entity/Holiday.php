@@ -4,6 +4,7 @@ namespace OpeningHours\Entity;
 
 use DateTime;
 use OpeningHours\Util\Dates;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Represents a single holiday

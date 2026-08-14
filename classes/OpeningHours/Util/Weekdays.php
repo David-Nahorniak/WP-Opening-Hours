@@ -3,6 +3,7 @@
 namespace OpeningHours\Util;
 
 use OpeningHours\Module\AbstractModule;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Helper class for dealing with Weekdays

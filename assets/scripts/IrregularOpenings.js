@@ -19,7 +19,8 @@ jQuery.fn.opIOs = function() {
 
   function add() {
     var data = {
-      action: "op_render_single_dummy_irregular_opening"
+      action: "op_render_single_dummy_irregular_opening",
+      nonce: ajax_object.nonce
     };
 
     jQuery.post(ajax_object.ajax_url, data, function(response) {

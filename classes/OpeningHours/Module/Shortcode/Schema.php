@@ -5,6 +5,7 @@ namespace OpeningHours\Module\Shortcode;
 use OpeningHours\Entity\PostSetProvider;
 use OpeningHours\Module\OpeningHours;
 use OpeningHours\Module\Schema\SchemaGenerator;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Shortcode rendering the selected Set's Schema.org data

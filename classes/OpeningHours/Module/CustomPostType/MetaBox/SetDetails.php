@@ -3,8 +3,10 @@
 namespace OpeningHours\Module\CustomPostType\MetaBox;
 
 use OpeningHours\Fields\MetaBoxFieldRenderer;
+use OpeningHours\Util\Dates;
 use OpeningHours\Util\MetaBoxPersistence;
 use WP_Post;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Meta Box for setting up set details
@@ -124,13 +126,13 @@ class SetDetails extends AbstractMetaBox {
 
   /** @inheritdoc */
   public function renderMetaBox(WP_Post $post) {
-    $this->nonceField();
+    $this->nonceField($post->ID);
     $builderUrl = $this->createShortcodeBuilderUrl($post);
 
     echo '<p>';
-    echo '<h3>' . __('Set Id', 'wp-opening-hours') . ': <code>' . $post->ID . '</code></h3>';
+    echo '<h3>' . __('Set Id', 'wp-opening-hours') . ': <code>' . absint($post->ID) . '</code></h3>';
     // prettier-ignore
-    echo '<a class="op-generate-sc-link" data-shortcode-builder-url="' . $builderUrl . '" href="' . $builderUrl . '" target="_blank">' . __('Create a Shortcode', 'wp-opening-hours') . '</a>';
+    echo '<a class="op-generate-sc-link" data-shortcode-builder-url="' . esc_attr($builderUrl) . '" href="' . esc_url($builderUrl) . '" target="_blank">' . __('Create a Shortcode', 'wp-opening-hours') . '</a>';
     echo '</h3>';
 
     $type = $post->post_parent == 0 ? 'parent' : 'child';
@@ -147,14 +149,57 @@ class SetDetails extends AbstractMetaBox {
 
   /** @inheritdoc */
   protected function saveData($post_id, WP_Post $post, $update) {
-    if (!array_key_exists($this->id, $_POST)) {
+    if (!array_key_exists($this->id, $_POST) || !is_array($_POST[$this->id])) {
       return;
     }
 
     $data = $_POST[$this->id];
     foreach ($this->fields as $field) {
       $value = array_key_exists($field['name'], $data) ? $data[$field['name']] : null;
-      $this->persistence->putValue($field['name'], $value, $post_id);
+      $this->persistence->putValue($field['name'], $this->sanitizeFieldValue($field, $value), $post_id);
+    }
+  }
+
+  /**
+   * Sanitizes a single field value according to its field configuration before persisting it.
+   *
+   * @param     array $field associative field configuration array
+   * @param     mixed $value the raw value from the POST data
+   * @return    mixed         the sanitized value (or null for non-string values)
+   */
+  protected function sanitizeFieldValue(array $field, $value) {
+    if ($field['type'] === 'select') {
+      if (!is_string($value)) {
+        return null;
+      }
+
+      if ($field['name'] === 'weekScheme') {
+        return in_array($value, array('all', 'even', 'odd'), true) ? $value : 'all';
+      }
+
+      return array_key_exists('options', $field) && is_array($field['options']) && array_key_exists($value, $field['options'])
+        ? $value
+        : null;
+    }
+
+    if (!is_string($value)) {
+      return null;
+    }
+
+    switch ($field['name']) {
+      case 'description':
+        return sanitize_textarea_field($value);
+
+      case 'alias':
+        return sanitize_title($value);
+
+      case 'dateStart':
+      case 'dateEnd':
+        $value = sanitize_text_field($value);
+        return preg_match(Dates::STD_DATE_FORMAT_REGEX, $value) === 1 ? $value : '';
+
+      default:
+        return sanitize_text_field($value);
     }
   }
 

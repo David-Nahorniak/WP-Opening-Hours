@@ -1,6 +1,7 @@
 <?php
 
 namespace OpeningHours\Util;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Class ViewRenderer

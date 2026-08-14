@@ -7,6 +7,7 @@ use OpeningHours\Module\CustomPostType\Set as SetPostType;
 use OpeningHours\Module\AbstractModule;
 use OpeningHours\Module\OpeningHours;
 use WP_Post;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Abstraction for a Meta Box
@@ -70,12 +71,24 @@ abstract class AbstractMetaBox extends AbstractModule {
   /**
    * Callback for saving the meta box data.
    *
-   * @param     int     $post_id The current post's id
-   * @param     WP_Post $post    The current post
-   * @param     bool    $update  Whether an existing post is updated (false if new post is created)
+   * @param     int      $post_id The current post's id
+   * @param     WP_Post  $post    The current post (may be null when fired for foreign post types)
+   * @param     bool     $update  Whether an existing post is updated (false if new post is created)
    */
-  public function saveDataCallback($post_id, WP_Post $post, $update) {
-    if ($this->verifyNonce() === false) {
+  public function saveDataCallback($post_id, $post, $update) {
+    if (!$post instanceof WP_Post || $post->post_type !== static::POST_TYPE) {
+      return;
+    }
+
+    if ((defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) || wp_is_post_autosave($post_id) || wp_is_post_revision($post_id)) {
+      return;
+    }
+
+    if (!current_user_can('edit_post', $post_id)) {
+      return;
+    }
+
+    if ($this->verifyNonce($post_id) === false) {
       return;
     }
 
@@ -83,11 +96,13 @@ abstract class AbstractMetaBox extends AbstractModule {
   }
 
   /**
-   * Verifies WordPress nonce
-   * @return    bool      Whether the nonce is valid
+   * Verifies WordPress nonce for the given post id
+   *
+   * @param     int $postId The post id the nonce was generated for
+   * @return    bool            Whether the nonce is valid
    */
-  protected function verifyNonce() {
-    $values = $this->generateNonceValues();
+  protected function verifyNonce($postId = 0) {
+    $values = $this->generateNonceValues($postId);
     if (!array_key_exists($values['name'], $_POST)) {
       return false;
     }
@@ -96,16 +111,25 @@ abstract class AbstractMetaBox extends AbstractModule {
     return wp_verify_nonce($nonceValue, $values['action']);
   }
 
-  /** Prints the nonce field for the meta box */
-  public function nonceField() {
-    $values = $this->generateNonceValues();
+  /** Prints the nonce field for the meta box
+   *
+   * @param     int $postId The post id to bind the nonce to
+   */
+  public function nonceField($postId = 0) {
+    $values = $this->generateNonceValues($postId);
     wp_nonce_field($values['action'], $values['name']);
   }
 
-  public function generateNonceValues() {
+  /**
+   * Generates the nonce name and action for the given post id
+   *
+   * @param     int $postId The post id to bind the nonce to
+   * @return    array           Associative array with the nonce 'name' and 'action'
+   */
+  public function generateNonceValues($postId = 0) {
     return array(
       'name' => $this->id . '_nonce',
-      'action' => $this->id . '_edit'
+      'action' => $this->id . '_edit_' . $postId
     );
   }
 

@@ -1,6 +1,7 @@
 <?php
 
 namespace OpeningHours\Module;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Abstraction for plugin module

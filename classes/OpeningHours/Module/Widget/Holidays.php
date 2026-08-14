@@ -4,6 +4,7 @@ namespace OpeningHours\Module\Widget;
 
 use OpeningHours\Module\OpeningHours;
 use OpeningHours\Module\Shortcode\Holidays as HolidaysShortcode;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Widget for Holiday Shortcode

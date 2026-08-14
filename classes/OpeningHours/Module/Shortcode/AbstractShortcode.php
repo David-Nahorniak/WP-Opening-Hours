@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use OpeningHours\Module\AbstractModule;
 use OpeningHours\Util\Helpers;
 use OpeningHours\Util\ViewRenderer;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Abstraction for a Shortcode
@@ -93,6 +94,7 @@ abstract class AbstractShortcode extends AbstractModule {
 
     $attributes = Helpers::unsetEmptyValues($attributes);
     $attributes = shortcode_atts($this->defaultAttributes, $attributes, $this->shortcodeTag);
+    $attributes = $this->filterAttributes($attributes);
 
     if (!array_key_exists('shortcode', $attributes)) {
       $attributes['shortcode'] = $this;

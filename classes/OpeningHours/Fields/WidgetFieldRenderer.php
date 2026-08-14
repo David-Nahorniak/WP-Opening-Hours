@@ -3,6 +3,7 @@
 namespace OpeningHours\Fields;
 
 use OpeningHours\Module\Widget\AbstractWidget;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Field Renderer for Widget form field

@@ -2,8 +2,9 @@
 Contributors: janizde
 Tags: opening hours,business hours,hours,table,overview,date,time,widget,shortcode,status,currently open,bar,restaurant
 Tested up to: 5.7.2
-Stable tag: 2.3.0
+Stable tag: 2.3.1
 Requires at least: 4.0.0
+Requires PHP: 7.4
 Donate link: https://github.com/janizde/WP-Opening-Hours#donate
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -93,6 +94,23 @@ Please read the section on [contributing to translations](https://github.com/jan
 If you found a bug you would like to fix feel free to [contribute to the project on GitHub](https://github.com/janizde/WP-Opening-Hours#contributing-to-code).
 
 == Changelog ==
+
+= 2.3.1 =
+
+* Security: Escape all shortcode/view output (esc_html/esc_attr/wp_kses_post), fixing Stored XSS via shortcode attributes (Contributor+) and via Holiday/Irregular Opening names on the frontend
+* Security: Escape JSON-LD schema output against `</script>` breakout (JSON_HEX_TAG/QUOT/AMP)
+* Security: Sanitize all meta-box POST inputs (Holidays, Irregular Openings, Set Details, Opening Hours) with whitelists/regex
+* Security: Add widget `update()` per-field sanitization (text/select/checkbox/number)
+* Security: Activate shortcode `validAttributeValues` whitelist filtering and validate `sprintf` format strings
+* Security: Add nonce + capability checks to admin AJAX endpoints (Periods/Holidays/Irregular Openings)
+* Security: Add capability, autosave, null-post and post-type guards to meta-box save callbacks; bind nonce to post ID (fixes fatal on save_post with null post)
+* Security: Escape all admin field rendering (FieldRenderer) and ajax/meta-box view output
+* Hardening: Add `defined('ABSPATH') || exit;` guard to all class/view PHP files
+* Hardening: Disable CPT public querying and archive for `op-set`
+* Hardening: Replace `extract()` in shortcode views with explicit variable assignments
+* Hardening: Restrict `maybeUpdate()`/import to admin context (reduces per-request DB writes)
+* Bump minimum PHP version to 7.4
+* Add PHPCS security sniffs (WordPress.Security.EscapeOutput/ValidatedSanitizedInput/NonceVerification)
 
 = 2.3.0 =
 

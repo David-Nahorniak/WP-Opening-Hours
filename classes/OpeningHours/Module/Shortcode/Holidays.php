@@ -6,6 +6,7 @@ use OpeningHours\Entity\Set;
 use OpeningHours\Module\OpeningHours;
 use OpeningHours\Util\Dates;
 use OpeningHours\Util\DateTimeRange;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Shortcode implementation for a list of Holidays

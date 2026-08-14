@@ -9,6 +9,7 @@ use OpeningHours\Module\CustomPostType\Set as SetCPT;
 use OpeningHours\Util\Dates;
 use OpeningHours\Util\Persistence;
 use OpeningHours\Util\Weekdays;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Module importing data from an older version of the Plugin

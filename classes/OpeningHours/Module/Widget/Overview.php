@@ -4,6 +4,7 @@ namespace OpeningHours\Module\Widget;
 
 use OpeningHours\Module\OpeningHours;
 use OpeningHours\Module\Shortcode\Overview as OverviewShortcode;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Widget for Overview Shortcode

@@ -3,6 +3,7 @@
 namespace OpeningHours\Util;
 
 use ArrayObject as NativeArrayObject;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Custom ArrayObject

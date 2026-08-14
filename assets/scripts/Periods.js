@@ -11,7 +11,8 @@
         var data = {
           action: "op_render_single_period",
           weekday: periodContainer.attr("data-day"),
-          set: periodContainer.attr("data-set")
+          set: periodContainer.attr("data-set"),
+          nonce: ajax_object.nonce
         };
 
         $.post(ajax_object.ajax_url, data, function(response) {

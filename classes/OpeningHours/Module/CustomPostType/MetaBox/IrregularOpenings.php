@@ -4,9 +4,11 @@ namespace OpeningHours\Module\CustomPostType\MetaBox;
 
 use OpeningHours\Entity\IrregularOpening;
 use OpeningHours\Module\OpeningHours as OpeningHoursModule;
+use OpeningHours\Util\Dates;
 use OpeningHours\Util\Persistence;
 use OpeningHours\Util\ViewRenderer;
 use WP_Post;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Meta Box implementation for Holidays meta box
@@ -40,6 +42,8 @@ class IrregularOpenings extends AbstractMetaBox {
 
   /** @inheritdoc */
   public function renderMetaBox(WP_Post $post) {
+    $this->nonceField($post->ID);
+
     $set = $this->getSet($post->ID);
 
     if (count($set->getIrregularOpenings()) < 1) {
@@ -74,12 +78,26 @@ class IrregularOpenings extends AbstractMetaBox {
    */
   public function getIrregularOpeningsFromPostData(array $data) {
     $ios = array();
-    for ($i = 0; $i < count($data['name']); $i++) {
-      try {
-        $data['timeStart'][$i] = date('H:i', strtotime($data['timeStart'][$i]));
-        $data['timeEnd'][$i] = date('H:i', strtotime($data['timeEnd'][$i]));
 
-        $io = new IrregularOpening($data['name'][$i], $data['date'][$i], $data['timeStart'][$i], $data['timeEnd'][$i]);
+    if (empty($data['name']) || !is_array($data['name'])) {
+      return $ios;
+    }
+
+    for ($i = 0; $i < count($data['name']); $i++) {
+      $name = isset($data['name'][$i]) && is_string($data['name'][$i]) ? sanitize_text_field($data['name'][$i]) : '';
+      $date = isset($data['date'][$i]) && is_string($data['date'][$i]) ? sanitize_text_field($data['date'][$i]) : '';
+      $timeStart = isset($data['timeStart'][$i]) && is_string($data['timeStart'][$i]) ? sanitize_text_field($data['timeStart'][$i]) : '';
+      $timeEnd = isset($data['timeEnd'][$i]) && is_string($data['timeEnd'][$i]) ? sanitize_text_field($data['timeEnd'][$i]) : '';
+
+      if (preg_match(Dates::STD_DATE_FORMAT_REGEX, $date) !== 1) {
+        continue;
+      }
+
+      $timeStart = date('H:i', strtotime($timeStart));
+      $timeEnd = date('H:i', strtotime($timeEnd));
+
+      try {
+        $io = new IrregularOpening($name, $date, $timeStart, $timeEnd);
         $ios[] = $io;
       } catch (\InvalidArgumentException $e) {
         // ignore item

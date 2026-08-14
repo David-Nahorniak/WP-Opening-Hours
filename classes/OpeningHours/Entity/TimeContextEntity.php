@@ -1,6 +1,7 @@
 <?php
 
 namespace OpeningHours\Entity;
+defined( 'ABSPATH' ) || exit;
 
 interface TimeContextEntity {
   /**

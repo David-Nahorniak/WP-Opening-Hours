@@ -1,11 +1,11 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 use OpeningHours\Module\CustomPostType\MetaBox\Holidays;
 
 $holidays = Holidays::getInstance();
 ?>
 
 <div id="op-holidays-wrap">
-	<?php Holidays::getInstance()->nonceField(); ?>
 	<table class="op-holidays" id="op-holidays-table">
 		<thead>
 		<th>

@@ -6,6 +6,7 @@ use DateInterval;
 use DateTime;
 use OpeningHours\Util\ArrayObject;
 use OpeningHours\Util\Dates;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Abstraction for a Set

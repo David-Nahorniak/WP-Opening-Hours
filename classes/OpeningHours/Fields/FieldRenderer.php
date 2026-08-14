@@ -1,6 +1,7 @@
 <?php
 
 namespace OpeningHours\Fields;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Abstraction for a FieldRenderer
@@ -60,7 +61,7 @@ class FieldRenderer {
 
     /** Field Label */
     if (!empty($caption) and !in_array($type, array(FieldTypes::CHECKBOX, FieldTypes::HEADING))) {
-      printf('<label for="%s">%s</label>', $id, $caption);
+      printf('<label for="%s">%s</label>', esc_attr($id), wp_kses($caption, $this->getInlineHtmlAllowedTags()));
     }
 
     switch ($type) {
@@ -72,20 +73,27 @@ class FieldRenderer {
         if (array_key_exists('datalist', $field) && is_array($field['datalist'])) {
           $attributes['list'] = $id . '_datalist';
           $datalistOptions = array_map(function ($item) {
-            return sprintf('<option value="%s">', $item);
+            return sprintf('<option value="%s">', esc_attr($item));
           }, $field['datalist']);
         }
 
         $attrString = $this->generateAttributesString($attributes);
-        printf('<input type="%s" id="%s" name="%s" value="%s" %s />', $type, $id, $name, $value, $attrString);
+        printf(
+          '<input type="%s" id="%s" name="%s" value="%s" %s />',
+          esc_attr($type),
+          esc_attr($id),
+          esc_attr($name),
+          esc_attr((is_scalar($value)) ? $value : ''),
+          $attrString
+        );
         if (isset($datalistOptions)) {
-          printf('<datalist id="%s">%s</datalist>', $id . '_datalist', implode(PHP_EOL, $datalistOptions));
+          printf('<datalist id="%s">%s</datalist>', esc_attr($id . '_datalist'), implode(PHP_EOL, $datalistOptions));
         }
         break;
 
       case FieldTypes::TEXTAREA:
         $attrString = $this->generateAttributesString($attributes);
-        printf('<textarea id="%s" name="%s" %s>%s</textarea>', $id, $name, $attrString, $value);
+        printf('<textarea id="%s" name="%s" %s>%s</textarea>', esc_attr($id), esc_attr($name), $attrString, esc_textarea((is_scalar($value)) ? $value : ''));
         break;
 
       case FieldTypes::SELECT:
@@ -101,7 +109,7 @@ class FieldRenderer {
 
         $attrString = $this->generateAttributesString($attributes);
 
-        printf('<select id="%s" name="%s" %s>', $id, $name, $attrString);
+        printf('<select id="%s" name="%s" %s>', esc_attr($id), esc_attr($name), $attrString);
         foreach ($options as $key => $caption) {
           $selected = 'selected="selected"';
 
@@ -111,7 +119,7 @@ class FieldRenderer {
             $selected = $key == $value ? $selected : null;
           }
 
-          printf('<option value="%s" %s>%s</option>', $key, $selected, $caption);
+          printf('<option value="%s" %s>%s</option>', esc_attr($key), $selected, esc_html($caption));
         }
 
         echo '</select>';
@@ -125,11 +133,11 @@ class FieldRenderer {
         $attrString = $this->generateAttributesString($attributes);
         printf(
           '<label for="%s"><input type="checkbox" name="%s" id="%s" %s /> %s</label>',
-          $id,
-          $name,
-          $id,
+          esc_attr($id),
+          esc_attr($name),
+          esc_attr($id),
           $attrString,
-          $caption
+          wp_kses($caption, $this->getInlineHtmlAllowedTags())
         );
         break;
 
@@ -138,19 +146,36 @@ class FieldRenderer {
           break;
         }
 
-        printf('<h3>%s</h3>', trim($field['heading']));
+        printf('<h3>%s</h3>', esc_html(trim($field['heading'])));
         break;
     }
 
     if (array_key_exists('description', $field)) {
-      printf('<span class="op-field-description">%s</span>', $field['description']);
+      printf('<span class="op-field-description">%s</span>', wp_kses($field['description'], $this->getInlineHtmlAllowedTags()));
     }
 
     if (isset($description) and is_string($description)) {
-      echo '<span class="op-widget-description">' . $description . '</span>';
+      echo '<span class="op-widget-description">' . wp_kses($description, $this->getInlineHtmlAllowedTags()) . '</span>';
     }
 
     echo '</p>';
+  }
+
+  /**
+   * Returns the small set of HTML tags that are allowed in inline field captions and descriptions.
+   *
+   * @return    array
+   */
+  protected function getInlineHtmlAllowedTags() {
+    return array(
+      'code' => array(),
+      'br' => array(),
+      'a' => array(
+        'href' => array(),
+        'target' => array(),
+        'rel' => array()
+      )
+    );
   }
 
   /**
@@ -185,7 +210,7 @@ class FieldRenderer {
         $value = implode(' ', $value);
       }
 
-      $str .= sprintf('%s="%s" ', $key, $value);
+      $str .= sprintf('%s="%s" ', esc_attr($key), esc_attr((is_scalar($value)) ? $value : ''));
     }
 
     if (count($attributes) > 0) {

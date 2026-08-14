@@ -4,6 +4,7 @@
  */
 
 namespace OpeningHours\Util;
+defined( 'ABSPATH' ) || exit;
 
 class Helpers {
   /**

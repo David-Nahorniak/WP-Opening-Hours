@@ -1,6 +1,7 @@
 <?php
 
 namespace OpeningHours\Module;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * I18n Module

@@ -10,6 +10,7 @@ use OpeningHours\Util\ViewRenderer;
 use OpeningHours\Util\Weekday;
 use OpeningHours\Util\Weekdays;
 use WP_Post;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Meta Box implementation for regular Opening Hours
@@ -32,6 +33,8 @@ class OpeningHours extends AbstractMetaBox {
 
   /** @inheritdoc */
   public function renderMetaBox(WP_Post $post) {
+    $this->nonceField($post->ID);
+
     $set = $this->getSet($post->ID);
     $periods = $this->groupPeriodsWithDummy($set->getPeriods()->getArrayCopy());
 
@@ -44,11 +47,9 @@ class OpeningHours extends AbstractMetaBox {
 
   /** @inheritdoc */
   protected function saveData($post_id, WP_Post $post, $update) {
-    $config = $_POST['opening-hours'];
-
-    if (!is_array($config)) {
-      $config = array();
-    }
+    $config = array_key_exists('opening-hours', $_POST) && is_array($_POST['opening-hours'])
+      ? $_POST['opening-hours']
+      : array();
 
     $periods = $this->getPeriodsFromPostData($config);
     $persistence = new Persistence($post);
@@ -66,8 +67,18 @@ class OpeningHours extends AbstractMetaBox {
     $periods = array();
 
     foreach ($data as $weekday => $dayConfig) {
+      $weekday = absint($weekday);
+
+      if ($weekday > 6 || !is_array($dayConfig) || empty($dayConfig['start']) || !is_array($dayConfig['start'])) {
+        continue;
+      }
+
       for ($i = 0; $i <= count($dayConfig['start']); $i++) {
         if (empty($dayConfig['start'][$i]) or empty($dayConfig['end'][$i])) {
+          continue;
+        }
+
+        if (!is_string($dayConfig['start'][$i]) || !is_string($dayConfig['end'][$i])) {
           continue;
         }
 

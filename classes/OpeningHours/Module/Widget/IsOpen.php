@@ -4,6 +4,7 @@ namespace OpeningHours\Module\Widget;
 
 use OpeningHours\Module\OpeningHours;
 use OpeningHours\Module\Shortcode\IsOpen as IsOpenShortcode;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Widget for IsOpen Shortcode

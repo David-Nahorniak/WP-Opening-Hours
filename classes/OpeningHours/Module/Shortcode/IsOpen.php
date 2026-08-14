@@ -8,6 +8,7 @@ use OpeningHours\Entity\Set;
 use OpeningHours\Module\OpeningHours;
 use OpeningHours\Util\Dates;
 use OpeningHours\Util\Weekdays;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Shortcode indicating whether the venue is currently open or not
@@ -96,7 +97,7 @@ class IsOpen extends AbstractShortcode {
     if ($attributes['show_closed_holidays']) {
       $holidaysList = $this->getTodaysHolidaysCommaSeperated($todayData);
       $closedText = $holidaysList
-        ? sprintf($attributes['closed_holiday_text'], $holidaysList)
+        ? sprintf($this->sanitizeFormatString($attributes['closed_holiday_text'], array(1)), $holidaysList)
         : $attributes['closed_text'];
     } else {
       $closedText = $attributes['closed_text'];
@@ -166,7 +167,7 @@ class IsOpen extends AbstractShortcode {
     $periodsStart = $periods[0]->getTimeStart()->format($timeFormat);
     $periodsEnd = $periods[count($periods) - 1]->getTimeEnd()->format($timeFormat);
 
-    return sprintf($attributes['today_format'], $periodString, $periodsStart, $periodsEnd);
+    return sprintf($this->sanitizeFormatString($attributes['today_format'], array(1, 2, 3)), $periodString, $periodsStart, $periodsEnd);
   }
 
   /**
@@ -182,7 +183,7 @@ class IsOpen extends AbstractShortcode {
 
     return sprintf(
       // Format String
-      $attributes['next_format'],
+      $this->sanitizeFormatString($attributes['next_format'], array(1, 2, 3, 4)),
 
       // 1$: Formatted Date
       Dates::format($attributes['date_format'], $nextPeriod->getTimeStart()),
@@ -196,5 +197,30 @@ class IsOpen extends AbstractShortcode {
       // 4%: Formatted End Time
       $nextPeriod->getTimeEnd()->format($attributes['time_format'])
     );
+  }
+
+  /**
+   * Sanitizes a user-controlled printf/sprintf format string so that only the
+   * allowed positional placeholders (e.g. %1$s) and literal %% are preserved.
+   * Any other conversion specification is escaped to a literal percent, which
+   * prevents both argument-count mismatches (warning/ValueError on PHP 8) and
+   * the injection of arbitrary specifiers.
+   *
+   * @param     string $format             The raw format string from the shortcode attributes
+   * @param     array  $allowedPlaceholders Sequential array of 1-based placeholder positions to allow (e.g. array(1,2,3,4))
+   * @return    string                       The sanitized format string
+   */
+  protected function sanitizeFormatString($format, array $allowedPlaceholders) {
+    if (!is_string($format)) {
+      return '';
+    }
+
+    $alternation = array();
+    foreach ($allowedPlaceholders as $position) {
+      $alternation[] = (int) $position . '\\$s';
+    }
+
+    $pattern = '/%(?!%|' . implode('|', $alternation) . ')/';
+    return preg_replace($pattern, '%%', $format);
   }
 }

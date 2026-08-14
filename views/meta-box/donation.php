@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <div class="paypal-donation-controls">
 
 	<select id="op-paypal-select-amount">
@@ -8,7 +9,7 @@
 
 			$selected = ( $a == 10 ) ? 'selected="selected"' : null;
 
-			echo '<option value="' . sprintf( '%d.00', $a ) . '" ' . $selected . '>$ ' . $a . '</option>';
+			echo '<option value="' . esc_attr( sprintf( '%d.00', $a ) ) . '" ' . $selected . '>$ ' . esc_html( $a ) . '</option>';
 		endforeach;
 
 		$locale = get_locale();
@@ -21,7 +22,7 @@
 
 	</select>
 
-	<img src="https://www.paypalobjects.com/<?php echo $locale; ?>/i/btn/btn_donateCC_LG.gif" style="cursor:pointer;"
+	<img src="https://www.paypalobjects.com/<?php echo esc_attr( $locale ); ?>/i/btn/btn_donateCC_LG.gif" style="cursor:pointer;"
 	     id="op-paypal-donation-submit"/>
 
 </div>
@@ -31,7 +32,7 @@
 	      id="op-paypal-donation-form">
 		<input type="hidden" name="cmd" value="_donations">
 		<input type="hidden" name="business" value="hello@jannikportz.de">
-		<input type="hidden" name="lc" value="<?php echo substr( $locale, 3 ); ?>">
+		<input type="hidden" name="lc" value="<?php echo esc_attr( substr( $locale, 3 ) ); ?>">
 		<input type="hidden" name="item_name" value="WP Opening Hours Plugin for WordPress">
 		<input type="hidden" name="amount" value="10.00" id="op-paypal-input-amount">
 		<input type="hidden" name="currency_code" value="USD">

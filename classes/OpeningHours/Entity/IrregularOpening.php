@@ -6,6 +6,7 @@ use DateInterval;
 use DateTime;
 use InvalidArgumentException;
 use OpeningHours\Util\Dates;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Represents an irregular opening
