@@ -2,7 +2,7 @@
 Contributors: janizde
 Tags: opening hours,business hours,hours,table,overview,date,time,widget,shortcode,status,currently open,bar,restaurant
 Tested up to: 5.7.2
-Stable tag: 2.3.1
+Stable tag: 2.3.3
 Requires at least: 4.0.0
 Requires PHP: 7.4
 Donate link: https://github.com/janizde/WP-Opening-Hours#donate
@@ -94,6 +94,17 @@ Please read the section on [contributing to translations](https://github.com/jan
 If you found a bug you would like to fix feel free to [contribute to the project on GitHub](https://github.com/janizde/WP-Opening-Hours#contributing-to-code).
 
 == Changelog ==
+
+= 2.3.3 =
+
+* Rebuild distributable assets bundle (`dist/`) with the scoped datepicker/timepicker styling fix so the picker popups have the dark background again
+* Scope the custom datepicker/timepicker styles to `#ui-datepicker-div` / `#ui-timepicker-div` instead of `.post-type-op-set` (jQuery UI appends the picker popups to `<body>`, so the previous ancestor selector never matched and the popups had a transparent background)
+
+= 2.3.2 =
+
+* Fix: Rebuild the distributable assets bundle (`dist/`) with the real jQuery UI timepicker addon and the compiled datepicker/timepicker styles. The 2.3.1 package shipped a hand-assembled `dist/scripts/main.js` that replaced the timepicker with a no-op shim (so the time picker in Irregular Openings and Periods did not work) and a `dist/styles/main.css` that omitted the `.ui-datepicker` / `.ui-timepicker` styling (so the admin calendar rendered unstyled)
+* Fix: Scope the custom datepicker/timepicker styles to `#ui-datepicker-div` / `#ui-timepicker-div` instead of `.post-type-op-set`, so the dark background and theming actually apply (jQuery UI appends the picker popups to `<body>`, so the previous ancestor selector never matched and the popups had a transparent background)
+* Initialize the `includes/jquery-ui-timepicker` submodule so the build source is present
 
 = 2.3.1 =
 
